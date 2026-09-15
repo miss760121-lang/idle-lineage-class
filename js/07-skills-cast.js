@@ -432,8 +432,8 @@ function castSkillInner(skId) {
     let __granted = player.grantedSkills && player.grantedSkills.includes(skId);
     let needLv = skillReqLv(sk, skId);   // 🏅 集中化：含魔導精通特例
     if(!__granted && (needLv === undefined || player.lv < needLv)) return false;
-    if(!__granted && sk.reqEle && player.elfEle !== sk.reqEle) return false;      // 屬性不符
-    if(!__granted && sk.reqEleAny && !player.elfEle) return false;                 // 尚未選擇屬性
+    if(!__granted && player.cls !== 'elf' && sk.reqEle && player.elfEle !== sk.reqEle) return false;      // 妖精四屬性技能：已學即可使用，不再受當前屬性限制
+    if(!__granted && player.cls !== 'elf' && sk.reqEleAny && !player.elfEle) return false;                 // 妖精不需先選擇屬性即可使用
 
     // 🏺 烈焰巫師的正式長袍：燃燒的火球→爆裂的火球。
     // ⚠️ v3.6.65 必須放在**等級/屬性閘之後**：爆裂的火球是「非可學技能」（無 reqM/reqE），
