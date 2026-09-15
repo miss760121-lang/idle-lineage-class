@@ -733,9 +733,12 @@ function useItem(u, silent = false, keepModal = false) {   // 🔌 加掛版補�
         if(reqLv === undefined) { logSys(`你的職業無法學習「${sd.n}」。`); return; }
         if(player.lv < reqLv) { logSys(`等級不足，需要等級 ${reqLv} 才能學習「${sd.n}」。`); return; }
         
-        // 👇 補上這兩行：確保屬性相符才能吃水晶！
-        if(sd.reqEle && player.elfEle !== sd.reqEle) { logSys(`屬性不符，無法學習「${sd.n}」。`); return; }
-        if(sd.reqEleAny && !player.elfEle) { logSys(`尚未選擇屬性，無法學習「${sd.n}」。`); return; }
+        // 🌟 妖精可學習全部四屬性精靈技能；保留技能本身 reqEle/reqEleAny，
+        //    不修改技能資料、元素效果或其他職業的技能學習限制。
+        if (player.cls !== 'elf') {
+            if(sd.reqEle && player.elfEle !== sd.reqEle) { logSys(`屬性不符，無法學習「${sd.n}」。`); return; }
+            if(sd.reqEleAny && !player.elfEle) { logSys(`尚未選擇屬性，無法學習「${sd.n}」。`); return; }
+        }
 
         if(!player.skills.includes(d.sk)) {
             player.skills.push(d.sk);
