@@ -253,6 +253,10 @@ function manualCast(skId) {
     let needLv = skillReqLv(sk, skId);   // 🏅 集中化：含魔導精通特例
     if(!__granted && needLv === undefined) { logSys('你的職業無法使用此技能。'); return; }
     if(!__granted && player.lv < needLv) { logSys('等級不足，無法使用此技能。'); return; }
+    // 🌟 妖精四屬性技能：只要已學會即可使用，不受目前選擇的自身屬性限制。
+    //    其他職業維持原本 reqEle / reqEleAny 規則。
+    if(!__granted && player.cls !== 'elf' && sk.reqEle && player.elfEle !== sk.reqEle) { logSys(`屬性不符，無法使用「${sk.n}」。`); return; }
+    if(!__granted && player.cls !== 'elf' && sk.reqEleAny && !player.elfEle) { logSys(`尚未選擇屬性，無法使用「${sk.n}」。`); return; }
     if((player.manualCd[skId] || 0) > 0) { logSys('技能冷卻中。'); return; }
     let cost = sk.mp ? player.d.getMpCost(sk.mp, sk.tier) : 0;
     if (player._setIllusion3 && isSupportSkill(sk)) cost = Math.max(1, Math.ceil(cost / 2));   // 🔮 幻覺3/5：輔助技能 MP 消耗 -50%
