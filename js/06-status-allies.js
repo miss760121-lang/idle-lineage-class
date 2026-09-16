@@ -2767,12 +2767,8 @@ function _mercAutoOn(ally, sid) {
 //     去判傭兵的技能（也正是 _allySkillOptions 原註解說「不可用 reqEle 判可用性」的原因；改讀 ally 後就成立了）。
 //   granted（裝備/頭盔賦予）比照玩家豁免屬性閘。非妖精職業的技能無 reqEle/reqEleAny → 一律 true，零影響。
 function allySkillElementOk(ally, sid) {
-    let sk = DB.skills[sid]; if (!sk) return true;
-    if (!sk.reqEle && !sk.reqEleAny) return true;
-    if (ally && ally.grantedSkills && ally.grantedSkills.includes(sid)) return true;
-    let ele = (ally && ally.elfEle) || '';
-    if (sk.reqEle && ele !== sk.reqEle) return false;   // 屬性不符（換屬性後的舊屬性魔法）
-    if (sk.reqEleAny && !ele) return false;             // 尚未選擇屬性
+    // 🧝 妖精傭兵：不再以傭兵自身 elfEle 作為屬性技能的學習/可用/自動施放門檻。
+    // reqEle/reqEleAny 保留在 DB，因為部分技能效果與元素精靈召喚仍會讀取 ally.elfEle。
     return true;
 }
 // 🔮 v2.7.96 幻術士傭兵立方屬性抗性 rider（補 parity）：玩家立方 buff 給 d:{resFire/resEarth/resWind:+30}(recompute 讀 player.buffs)；傭兵立方走 allyCubeTick 不寫 ally.buffs→抗性原本拿不到。改在重算後(buildAlly/_allyLevelRecompute)直接補「已學會＋來源有勾自動施放」的立方抗性到 ally.d（與 allyCubeTick 傷害的勾選閘一致；受屬性攻擊時 js/04:891-894/1007-1010 讀 ally.d.res*）。
